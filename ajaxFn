@@ -1,0 +1,57 @@
+/*
+method:get、post,默认get,
+data:发送的数据,默认为''，
+callback:请求成功的函数,responText为参数,responText未做处理
+*/
+function ajax (method, url, data, callback) {
+
+    var xhr = null;
+
+    try{
+      xhr = new XMLHttpRequest();
+    }catch(e){
+      xhr = new ActiveXObject('Microsoft.XMLHTTP')
+    }
+
+    if ( arguments[0].indexOf('.') != -1) {
+
+      if (typeof arguments[1] == 'function') {
+
+        var callback = arguments[1];
+        var data = '';
+
+      }else{
+        // console.error(arguments[2])
+        var callback = arguments[2];
+        var data = arguments[1];
+        //实际参数小于函数定义参数时，使用arguments定义变量充当参数，应该先定义后面的参数，否则会影响后面的值
+      }
+      var url = arguments[0];
+      var method = 'get';
+    }
+
+    method = method.toLowerCase();
+
+    if (method == 'get' && data) {
+      url = url + '?' + data;
+    }
+
+    xhr.open(method,url,true);
+
+    if (method == 'get') {
+      xhr.send();
+    }else {
+      xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+      xhr.send(data)
+    }
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            callback && callback(xhr.responseText);
+          }else {
+            alert('error')
+          }
+        }
+    }
+}
